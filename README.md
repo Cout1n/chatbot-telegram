@@ -15,8 +15,7 @@ Crie as seguintes credenciais no menu **Credentials** do n8n:
 
 * **Telegram API:** Insira seu `TELEGRAM_BOT_TOKEN` (obtido no [@BotFather](https://t.me/botfather)).
 * **OpenWeatherMap API:** Insira sua `OPENWEATHER_API_KEY` (obtida no [site oficial](https://openweathermap.org/api)).
-
-> **Importante:** Verifique se cada nó (node) do workflow está com a credencial correspondente selecionada.
+* **Gemini API:** Insira a `GOOGLE_API_KEY` (obtida no [site oficial](https://aistudio.google.com/app/api-keys)).
 
 
 ###  Como Testar
@@ -31,3 +30,4 @@ Crie as seguintes credenciais no menu **Credentials** do n8n:
 
 * `TELEGRAM_BOT_TOKEN`: Token de acesso do seu bot.
 * `OPENWEATHER_API_KEY`: Chave da API de clima.
+* `GOOGLE_API_KEY`: Chave da API do Gemini.
