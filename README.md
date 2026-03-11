@@ -1,33 +1,38 @@
 
 #  Chatbot Previsão do Tempo (n8n + Telegram)
 
-Automação que recebe o nome de uma cidade via **Telegram**, consulta a API do **OpenWeather** e retorna o clima em tempo real.
+Este repositório contém um workflow avançado para n8n que transforma o Telegram em um assistente meteorológico inteligente. O bot combina dados em tempo real da OpenWeather com a capacidade de reescrita natural do Google Gemini.
 
 
+###  Pré-requisitos
+
+1. n8n instalado (v1.0+)
+2. Telegram Bot Token: Obtido via @BotFather.
+3. OpenWeather API Key: Obtida no OpenWeatherMap.
+4. Google Gemini API Key: Obtida no Google AI Studio.
+ 
 ###  Como Importar
 
-1. No **n8n**, crie um novo workflow.
-2. Copie o código JSON do projeto e dê **Ctrl+V** diretamente no canvas (ou use *Import from File*).
- 
-###  Configuração de Credenciais
-
-Crie as seguintes credenciais no menu **Credentials** do n8n:
-
-* **Telegram API:** Insira seu `TELEGRAM_BOT_TOKEN` (obtido no [@BotFather](https://t.me/botfather)).
-* **OpenWeatherMap API:** Insira sua `OPENWEATHER_API_KEY` (obtida no [site oficial](https://openweathermap.org/api)).
-* **Gemini API:** Insira a `GOOGLE_API_KEY` (obtida no [site oficial](https://aistudio.google.com/app/api-keys)).
+* Faça o download do arquivo workflow-telegram-chatbot.json.
+* No seu n8n, clique em Workflows > Import from File.
+* Selecione o arquivo baixado.
 
 
-###  Como Testar
+###  Configuração das Credenciais
 
-1. Ative o workflow (**Active** no canto superior).
-2. No Telegram, envie o nome de uma cidade para o seu bot (ex: `São Paulo`).
-3. **Retorno esperado:** Uma mensagem com a descrição do clima e a temperatura atual da cidade enviada.
+Após importar, você deve configurar as credenciais no painel do n8n para que o bot funcione:
+1. Telegram API: Crie uma credencial de Telegram e insira seu Token.
+2. OpenWeather API (Query Auth): * Crie uma credencial do tipo Query Auth.
+ Name: OpenWeather API
+ Query Name: appid
+ Value: Sua chave da OpenWeather.
+3. Google Gemini API: Crie uma credencial de Gemini e insira sua API Key.
 
 
 
-###  Variáveis Utilizadas
+###  Como Executar e Testar
 
-* `TELEGRAM_BOT_TOKEN`: Token de acesso do seu bot.
-* `OPENWEATHER_API_KEY`: Chave da API de clima.
-* `GOOGLE_API_KEY`: Chave da API do Gemini.
+* O que enviar: O nome de uma cidade (ex: Curitiba ou Recife-PE).
+* O que esperar: Uma resposta natural e amigável informando a temperatura atual e as condições do céu.
+*  Exemplo: "🌤️ Em Curitiba, a temperatura atual é de 18°C agora.".
+
