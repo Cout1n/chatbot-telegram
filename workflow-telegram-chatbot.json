@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        0,
-        0
+        -336,
+        -16
       ],
       "id": "939a4b55-fea5-43a9-bfef-a6e20c7d0b9a",
       "name": "Telegram Trigger",
@@ -27,6 +27,8 @@
     {
       "parameters": {
         "url": "=https://api.openweathermap.org/data/2.5/weather",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
@@ -41,10 +43,6 @@
             {
               "name": "lang",
               "value": "pt_br"
-            },
-            {
-              "name": "appid",
-              "value": "OPENWEATHER_API_KEY"
             }
           ]
         },
@@ -53,11 +51,17 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        384,
-        0
+        432,
+        -64
       ],
       "id": "9d8dc553-2979-45ea-9a93-dbf94a8024e6",
       "name": "HTTP Request",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "WtTl5fowmBF8Ws8k",
+          "name": "OpenWeather API"
+        }
+      },
       "onError": "continueRegularOutput"
     },
     {
@@ -67,7 +71,7 @@
             {
               "id": "2b020e0d-baa4-407e-a149-95a2aed8c372",
               "name": "queue",
-              "value": "={{ $json.message.text.split(',')[0].trim().toLowerCase().normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\").replace(/\\s[a-z]{2}$/i, \"\").trim() }}",
+              "value": "={{ $json.message.text.split(/[,\\-]/)[0].trim().toLowerCase().normalize(\"NFD\").replace(/[\\u0300-\\u036f]/g, \"\").replace(/\\s[a-z]{2}$/i, \"\").trim() }}",
               "type": "string"
             }
           ]
@@ -78,8 +82,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        192,
-        0
+        -144,
+        -16
       ],
       "id": "2844982f-5a74-4a20-8821-a3bd39489476",
       "name": "format da entrada"
@@ -103,6 +107,26 @@
                 "operation": "true",
                 "singleValue": true
               }
+            },
+            {
+              "id": "a9af2db6-8f56-4204-85da-0df031dbba6b",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "12106741-cfa0-4801-a697-3403ed0894d9",
+              "leftValue": "={{ $json.main.temp }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
             }
           ],
           "combinator": "and"
@@ -112,8 +136,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        576,
-        0
+        640,
+        16
       ],
       "id": "3222bc15-80e6-45c9-9d2c-083a582b7b32",
       "name": "If"
@@ -121,40 +145,18 @@
     {
       "parameters": {
         "chatId": "={{ $node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"] }}",
-        "text": "={{ $json.content.parts[0].text ||  $('format dos dados').item.json.mensagem }}",
+        "text": "={{$json.textoFinal || $json.message || $json.content.parts[0].text  }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1264,
-        -272
+        1472,
+        64
       ],
       "id": "9c4f4c23-d24f-47ba-98b7-d2e76655f71f",
       "name": "Send a text message",
       "webhookId": "136eec58-906c-4576-98a7-6c9147db69d7",
-      "credentials": {
-        "telegramApi": {
-          "id": "tvYZz7tXa57d6dSq",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"] }}",
-        "text": "={{ $json.textoFinal }}",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        976,
-        192
-      ],
-      "id": "cc495716-cc51-40b4-bf07-ef3bcac5bc27",
-      "name": "Send a text message1",
-      "webhookId": "13e452d9-c869-4869-964b-2f3d56b52ffe",
       "credentials": {
         "telegramApi": {
           "id": "tvYZz7tXa57d6dSq",
@@ -169,7 +171,7 @@
             {
               "id": "c84195ef-c5f4-42ab-899a-d21ddcb9226d",
               "name": "textoFinal",
-              "value": "❌ Cidade não encontrada. Informe o nome da cidade de preferencia com o formato CIdade. UF (ex: São Paulo, SP).",
+              "value": "❌ Cidade não encontrada. Informe o nome da cidade de preferencia com o formato Cidade, UF (ex: São Paulo, SP).",
               "type": "string"
             }
           ]
@@ -179,8 +181,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        768,
-        192
+        864,
+        240
       ],
       "id": "41987d02-e09e-42bd-a696-48329401f65c",
       "name": "Rota de Erro"
@@ -196,11 +198,11 @@
         "messages": {
           "values": [
             {
-              "content": "=Você é um assistente meteorológico. Receba os dados de clima e reescreva a mensagem de forma natural, em um bom tom, em português e sem desambiguação.",
+              "content": "=Você é um assistente meteorológico. Receba os dados de clima e reescreva a mensagem de forma natural, em um bom tom, em português e com desambiguação.",
               "role": "model"
             },
             {
-              "content": "=Com base na cidade {{ $json.name }} e na temperatura {{ $json.main.temp }}, arredonde a temperatura e escreva apenas uma frase simples com essas informações. Coloque um emoji antes da frase que simboliza a palavra dessa variável: {{ $json.weather[0].main }}"
+              "content": "=Com base na cidade {{ $json.name }} e na temperatura {{ $json.main.temp }} °C, arredonde a temperatura e escreva apenas uma frase simples com essas informações. Coloque um emoji antes da frase, que simboliza o ícone meteorológico do OpenWeatherMap: {{ $json.weather[0].icon }} "
             }
           ]
         },
@@ -211,7 +213,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        800,
+        784,
         -128
       ],
       "id": "8d082181-adbe-4817-84f8-549b14359150",
@@ -227,38 +229,112 @@
     },
     {
       "parameters": {
-        "jsCode": "const city = $input.first().json.name;\nconst temp = $input.first().json.main.temp ; \n\nreturn {\n  message: ` A temperatura em ${city} é de ${temp}°C.`,\n  ok: true,\n  raw_data: { city, temp } // Enviamos isso para o Gemini processar\n};"
+        "jsCode": "const city = $input.first().json.name;\nconst temp = Math.round($input.first().json.main.temp) ; \n\nreturn {\n  message: ` A temperatura em ${city} é de ${temp}°C.`,\n  ok: true,\n  raw_data: { city, temp } // Enviamos isso para o Gemini processar\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1136,
-        -16
+        1040,
+        48
       ],
       "id": "51e823c3-7db7-46dd-b25f-c0da99b5952f",
       "name": "Code in JavaScript"
     },
     {
       "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1264,
+        48
+      ],
+      "id": "09dfb4ab-ac86-4696-901b-213fcadb0641",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
         "chatId": "={{ $node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"] }}",
-        "text": "={{ $json.message }}",
+        "text": "Informe o nome da cidade de preferencia com o formato Cidade, UF (ex: São Paulo, SP).",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1392,
-        -16
+        416,
+        144
       ],
-      "id": "315015de-841e-4afb-9879-5e21ab37bf4e",
-      "name": "Send a text message2",
-      "webhookId": "96c7a512-93c4-4ac4-9505-f85403d0e377",
+      "id": "1c994232-bdbe-4cc8-bc68-2f24c5c3af0e",
+      "name": "feedback imediato",
+      "webhookId": "20fc5ef2-629b-435a-9c09-9c32727634b0",
       "credentials": {
         "telegramApi": {
           "id": "tvYZz7tXa57d6dSq",
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "99e185b8-9c61-4dbc-ac28-76243c60b67e",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "76840e0b-53eb-4bd6-a4b0-8a942eabf1a6",
+              "leftValue": "={{ $json.queue.length }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "0bcc12ab-988d-46f2-be38-b1e8338556ae",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "ola",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "ee1eb0c4-18e4-4d59-a640-355f455ca470",
+              "leftValue": "={{ $json.queue }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        0
+      ],
+      "id": "659b9051-06c3-4966-80a0-cc0f1dc65cd0",
+      "name": "If filtro"
     }
   ],
   "pinData": {},
@@ -289,7 +365,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "If filtro",
             "type": "main",
             "index": 0
           }
@@ -323,23 +399,18 @@
       "main": [
         [
           {
-            "node": "Send a text message1",
+            "node": "Merge",
             "type": "main",
-            "index": 0
+            "index": 2
           }
         ]
-      ]
-    },
-    "Send a text message1": {
-      "main": [
-        []
       ]
     },
     "Message a model": {
       "main": [
         [
           {
-            "node": "Send a text message",
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
@@ -357,7 +428,41 @@
       "main": [
         [
           {
-            "node": "Send a text message2",
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "feedback imediato": {
+      "main": [
+        []
+      ]
+    },
+    "If filtro": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "feedback imediato",
             "type": "main",
             "index": 0
           }
@@ -369,7 +474,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "87b2144e-6398-40c0-a8ad-a8f8d8003896",
+  "versionId": "f9f7183d-90d5-4826-a5af-8dbd6cae6fae",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "4e69765c37f8d1c12ac33a3f738811ea0671fc0fcaf8d8dae47a10337236028a"
