@@ -6,7 +6,7 @@ Este repositório contém um workflow avançado para n8n que transforma o Telegr
 
 ###  Pré-requisitos
 
-1. n8n instalado (v1.0+)
+1. n8n instalado (v1.114.3+)
 2. Telegram Bot Token: Obtido via @BotFather.
 3. OpenWeather API Key: Obtida no OpenWeatherMap.
 4. Google Gemini API Key: Obtida no Google AI Studio.
@@ -35,4 +35,5 @@ Após importar, você deve configurar as credenciais no painel do n8n para que o
 * O que enviar: O nome de uma cidade (ex: Curitiba ou Recife-PE).
 * O que esperar: Uma resposta natural e amigável informando a temperatura atual e as condições do céu.
 *  Exemplo: "🌤️ Em Curitiba, a temperatura atual é de 18°C agora.".
+
 
